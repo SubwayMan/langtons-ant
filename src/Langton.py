@@ -1,12 +1,13 @@
 
 from fltk import *
 from collections import deque
+import time
 
-class Langton(Fl_Double_Window):
+class Langton(Fl_Window):
 
     def __init__(self, label = "Langton's Ant"):
 
-        Fl_Double_Window.__init__(self, 600, 800, label)
+        Fl_Window.__init__(self, 600, 800, label)
         self.loc = (150, 150)
         self.tiles = []
         self.orient = deque(["LEFT", "UP", "RIGHT", "DOWN"])
@@ -28,15 +29,15 @@ class Langton(Fl_Double_Window):
 
         self.but = Fl_Button(0, 600, 600, 200)
         self.but.label("NEXT")
-        self.but.callback(self.step)
+        self.but.callback(self.b_cb)
         self.end()
         self.show()
 
-    def step(self, w):
+    def step(self, w=None):
         
         r, c = self.loc
 
-        if not 0<=r<=300 or not 0<=c<=300:
+        if not 0<=r<300 or not 0<=c<300:
             return None
 
         if self.tiles[r][c].color() == FL_WHITE:
@@ -48,8 +49,14 @@ class Langton(Fl_Double_Window):
             self.orient.rotate(1)
 
         self.loc = self.cmp[self.orient[0]](self.loc)
-        self.redraw()
-        print(self.orient[0])
+        self.tiles[r][c].redraw()
+        Fl.repeat_timeout(0.01, self.step)
+
+    def b_cb(self, w):
+        
+        self.but.deactivate()
+       	Fl.add_timeout(0.1, self.step) 
+
 if __name__ == "__main__":
     a = Langton()
     Fl.run()
