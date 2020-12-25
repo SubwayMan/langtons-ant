@@ -2,12 +2,13 @@
 from fltk import *
 from collections import deque
 import time
+import math 
 
-class Langton(Fl_Window):
+class Langton(Fl_Double_Window):
 
     def __init__(self, label = "Langton's Ant"):
 
-        Fl_Window.__init__(self, 600, 800, label)
+        Fl_Double_Window.__init__(self, 600, 650, label)
         self.loc = (150, 150)
         self.tiles = []
         self.orient = deque(["LEFT", "UP", "RIGHT", "DOWN"])
@@ -16,7 +17,10 @@ class Langton(Fl_Window):
                     "LEFT": lambda a: (a[0], a[1]-1), 
                     "RIGHT": lambda a: (a[0], a[1]+1)}
 
+        self.colors = [FL_BLACK, FL_WHITE, FL_GRAY0, FL_RED, FL_DARK_MAGENTA, FL_CYAN, FL_BLUE, FL_DARK_GREEN]
+        self.waittime = 1
         self.begin()
+
         for i in range(300):
             row = []
             for j in range(300):
@@ -27,9 +31,20 @@ class Langton(Fl_Window):
             
             self.tiles.append(row)
 
-        self.but = Fl_Button(0, 600, 600, 200)
-        self.but.label("NEXT")
-        self.but.callback(self.b_cb)
+        self.startbut = Fl_Button(0, 600, 50, 50)
+        self.startbut.label("START")
+        self.startbut.callback(self.b_cb)
+        self.stopbut = Fl_Button(550, 600, 50, 50)
+        self.stopbut.label("STOP")
+        self.stopbut.callback(self.s_cb)
+
+        #slider
+        self.sl = Fl_Slider(50, 600, 500, 50)
+        self.sl.type(FL_HOR_NICE_SLIDER)
+        self.sl.range(0, 3)
+        self.sl.step(0.1)
+        self.sl.callback(self.slide_cb)
+
         self.end()
         self.show()
 
@@ -50,13 +65,22 @@ class Langton(Fl_Window):
 
         self.loc = self.cmp[self.orient[0]](self.loc)
         self.tiles[r][c].redraw()
-        Fl.repeat_timeout(0.01, self.step)
+        Fl.repeat_timeout(1/self.waittime, self.step)
 
     def b_cb(self, w):
         
-        self.but.deactivate()
-       	Fl.add_timeout(0.1, self.step) 
+        self.startbut.deactivate()
+        Fl.add_timeout(1/self.waittime, self.step) 
 
+    def s_cb(self, w):
+        Fl.remove_timeout(self.step)
+        self.startbut.activate()
+
+    def slide_cb(self, w):
+
+        print(w.value())
+        self.waittime = math.pow(10, self.sl.value())
+       
 if __name__ == "__main__":
     a = Langton()
     Fl.run()
