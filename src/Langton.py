@@ -32,10 +32,10 @@ class Langton(Fl_Double_Window):
             self.tiles.append(row)
 
         self.startbut = Fl_Button(0, 600, 50, 50)
-        self.startbut.label("START")
+        self.startbut.label("@>")
         self.startbut.callback(self.b_cb)
         self.stopbut = Fl_Button(550, 600, 50, 50)
-        self.stopbut.label("STOP")
+        self.stopbut.label("@refresh")
         self.stopbut.callback(self.s_cb)
 
         #slider
@@ -71,16 +71,34 @@ class Langton(Fl_Double_Window):
         
         self.startbut.deactivate()
         Fl.add_timeout(1/self.waittime, self.step) 
+        self.stopbut.label("@||")
+        self.stopbut.callback(self.s_cb)
 
     def s_cb(self, w):
+    	
         Fl.remove_timeout(self.step)
         self.startbut.activate()
-
+        self.stopbut.label("@refresh")
+        self.stopbut.callback(self.reset_cb)
+		
     def slide_cb(self, w):
 
         print(w.value())
         self.waittime = math.pow(10, self.sl.value())
-       
+
+    def reset_cb(self, w):       
+        
+        self.loc = (150, 150)
+        for r in self.tiles:
+            for e in r:
+                e.color(FL_WHITE)
+	
+        self.orient.rotate(-1*(self.orient.index("LEFT")))
+        self.redraw()
+
+
+
+
 if __name__ == "__main__":
     a = Langton()
     Fl.run()
