@@ -12,13 +12,18 @@ class Langton(Fl_Double_Window):
         self.loc = (150, 150)
         self.tiles = []
         self.orient = deque(["LEFT", "UP", "RIGHT", "DOWN"])
+        self.seq = "LLRR"
         self.cmp = {"UP": lambda a: (a[0]-1, a[1]), 
                     "DOWN": lambda a: (a[0]+1, a[1]), 
                     "LEFT": lambda a: (a[0], a[1]-1), 
                     "RIGHT": lambda a: (a[0], a[1]+1)}
 
-        self.colors = [FL_BLACK, FL_WHITE, FL_GRAY0, FL_RED, FL_DARK_MAGENTA, FL_CYAN, FL_BLUE, FL_DARK_GREEN]
+        self.colors = [FL_WHITE, FL_BLACK, FL_RED, FL_CYAN, FL_DARK_MAGENTA, FL_BLUE, FL_DARK_GREEN]
+        self.cmap = {}
         self.waittime = 1
+
+        self.setcmap()
+      
         self.begin()
 
         for i in range(300):
@@ -48,6 +53,12 @@ class Langton(Fl_Double_Window):
         self.end()
         self.show()
 
+    def setcmap(self):
+
+        for pos, c in enumerate(self.seq):
+    
+            self.cmap[self.colors[pos]] = c
+
     def step(self, w=None):
         
         r, c = self.loc
@@ -55,14 +66,17 @@ class Langton(Fl_Double_Window):
         if not 0<=r<300 or not 0<=c<300:
             return None
 
-        if self.tiles[r][c].color() == FL_WHITE:
-            self.tiles[r][c].color(FL_BLACK)
+        col = self.tiles[r][c].color()
+        ncol = (self.colors.index(col)+1)%len(self.seq)
+        if ncol < 0: ncol += len(self.colors)
+
+        if self.cmap[col] == "R":
             self.orient.rotate(-1)
 
-        elif self.tiles[r][c].color() == FL_BLACK:
-            self.tiles[r][c].color(FL_WHITE)
+        elif self.cmap[col] == "L":
             self.orient.rotate(1)
 
+        self.tiles[r][c].color(self.colors[ncol])
         self.loc = self.cmp[self.orient[0]](self.loc)
         self.tiles[r][c].redraw()
         Fl.repeat_timeout(1/self.waittime, self.step)
@@ -80,10 +94,9 @@ class Langton(Fl_Double_Window):
         self.startbut.activate()
         self.stopbut.label("@refresh")
         self.stopbut.callback(self.reset_cb)
-		
+
     def slide_cb(self, w):
 
-        print(w.value())
         self.waittime = math.pow(10, self.sl.value())
 
     def reset_cb(self, w):       
@@ -92,7 +105,7 @@ class Langton(Fl_Double_Window):
         for r in self.tiles:
             for e in r:
                 e.color(FL_WHITE)
-	
+
         self.orient.rotate(-1*(self.orient.index("LEFT")))
         self.redraw()
 
