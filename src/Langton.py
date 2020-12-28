@@ -77,7 +77,11 @@ class Langton(Fl_Double_Window):
             self.reset_cb(self)
             self.seq = newseq            
             self.setcmap()
-            self.b_cb(self)
+            
+        else:
+            fl_alert("Invalid sequence!")
+
+        self.b_cb(self)
 
     def step(self, w=None):
         
