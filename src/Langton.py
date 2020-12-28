@@ -3,6 +3,7 @@ from fltk import *
 from collections import deque
 import time
 import math 
+import re
 
 class Langton(Fl_Double_Window):
 
@@ -12,13 +13,13 @@ class Langton(Fl_Double_Window):
         self.loc = (150, 150)
         self.tiles = []
         self.orient = deque(["LEFT", "UP", "RIGHT", "DOWN"])
-        self.seq = "RRLLLRLLLRRR"
+        self.seq = "RL"
         self.cmp = {"UP": lambda a: (a[0]-1, a[1]), 
                     "DOWN": lambda a: (a[0]+1, a[1]), 
                     "LEFT": lambda a: (a[0], a[1]-1), 
                     "RIGHT": lambda a: (a[0], a[1]+1)}
 
-        self.colors = [FL_WHITE, FL_BLACK, FL_RED, FL_CYAN, FL_DARK_MAGENTA, FL_BLUE, FL_DARK_GREEN, FL_YELLOW, FL_DARK_RED, 
+        self.colors = [FL_BLACK, FL_WHITE, FL_RED, FL_CYAN, FL_DARK_MAGENTA, FL_BLUE, FL_DARK_GREEN, FL_YELLOW, FL_DARK_RED, 
                        fl_rgb_color(252, 119, 3), fl_rgb_color(87, 23, 235), fl_rgb_color(0, 255, 4)]
         self.cmap = {}
         self.waittime = 1
@@ -35,7 +36,7 @@ class Langton(Fl_Double_Window):
             for j in range(300):
                 t = Fl_Box(i*2, (j*2)+20, 2, 2)
                 t.box(FL_FLAT_BOX)
-                t.color(FL_WHITE)
+                t.color(FL_BLACK)
                 row.append(t)
             
             self.tiles.append(row)
@@ -63,7 +64,20 @@ class Langton(Fl_Double_Window):
     
             self.cmap[self.colors[pos]] = c
 
-    def setseq(self):
+    def setseq(self, w):
+
+        self.s_cb(self)
+
+        newseq = fl_input("Enter Sequence", "")
+
+        if newseq == None:
+            return None
+
+        if re.search("^[LR]{2,12}$", newseq):
+            self.reset_cb(self)
+            self.seq = newseq            
+            self.setcmap()
+            self.b_cb(self)
 
     def step(self, w=None):
         
@@ -91,7 +105,7 @@ class Langton(Fl_Double_Window):
         
         self.startbut.deactivate()
         Fl.add_timeout(1/self.waittime, self.step) 
-        self.stopbut.label("@||")
+        self.stopbut.label("@#||")
         self.stopbut.callback(self.s_cb)
 
     def s_cb(self, w):
@@ -110,7 +124,7 @@ class Langton(Fl_Double_Window):
         self.loc = (150, 150)
         for r in self.tiles:
             for e in r:
-                e.color(FL_WHITE)
+                e.color(FL_BLACK)
 
         self.orient.rotate(-1*(self.orient.index("LEFT")))
         self.redraw()
