@@ -8,17 +8,18 @@ class Langton(Fl_Double_Window):
 
     def __init__(self, label = "Langton's Ant"):
 
-        Fl_Double_Window.__init__(self, 600, 650, label)
+        Fl_Double_Window.__init__(self, 600, 670, label)
         self.loc = (150, 150)
         self.tiles = []
         self.orient = deque(["LEFT", "UP", "RIGHT", "DOWN"])
-        self.seq = "LLRR"
+        self.seq = "RRLLLRLLLRRR"
         self.cmp = {"UP": lambda a: (a[0]-1, a[1]), 
                     "DOWN": lambda a: (a[0]+1, a[1]), 
                     "LEFT": lambda a: (a[0], a[1]-1), 
                     "RIGHT": lambda a: (a[0], a[1]+1)}
 
-        self.colors = [FL_WHITE, FL_BLACK, FL_RED, FL_CYAN, FL_DARK_MAGENTA, FL_BLUE, FL_DARK_GREEN]
+        self.colors = [FL_WHITE, FL_BLACK, FL_RED, FL_CYAN, FL_DARK_MAGENTA, FL_BLUE, FL_DARK_GREEN, FL_YELLOW, FL_DARK_RED, 
+                       fl_rgb_color(252, 119, 3), fl_rgb_color(87, 23, 235), fl_rgb_color(0, 255, 4)]
         self.cmap = {}
         self.waittime = 1
 
@@ -26,25 +27,28 @@ class Langton(Fl_Double_Window):
       
         self.begin()
 
+        #menu
+        self.menu = Fl_Menu_Bar(0, 0, 600, 20)
+        self.menu.add("New/Sequence", 0, self.setseq)
         for i in range(300):
             row = []
             for j in range(300):
-                t = Fl_Box(i*2, j*2, 2, 2)
+                t = Fl_Box(i*2, (j*2)+20, 2, 2)
                 t.box(FL_FLAT_BOX)
                 t.color(FL_WHITE)
                 row.append(t)
             
             self.tiles.append(row)
 
-        self.startbut = Fl_Button(0, 600, 50, 50)
+        self.startbut = Fl_Button(0, 620, 50, 50)
         self.startbut.label("@>")
         self.startbut.callback(self.b_cb)
-        self.stopbut = Fl_Button(550, 600, 50, 50)
+        self.stopbut = Fl_Button(550, 620, 50, 50)
         self.stopbut.label("@refresh")
         self.stopbut.callback(self.s_cb)
 
         #slider
-        self.sl = Fl_Slider(50, 600, 500, 50)
+        self.sl = Fl_Slider(50, 620, 500, 50)
         self.sl.type(FL_HOR_NICE_SLIDER)
         self.sl.range(0, 3)
         self.sl.step(0.1)
@@ -58,6 +62,8 @@ class Langton(Fl_Double_Window):
         for pos, c in enumerate(self.seq):
     
             self.cmap[self.colors[pos]] = c
+
+    def setseq(self):
 
     def step(self, w=None):
         
@@ -109,6 +115,7 @@ class Langton(Fl_Double_Window):
         self.orient.rotate(-1*(self.orient.index("LEFT")))
         self.redraw()
 
+    
 
 
 
