@@ -11,7 +11,7 @@ Langton's Ant is a simple set of rules that are imposed on an "ant" moving throu
 # Program use
 - Simulation can be started/paused with buttons. Upon pause, simulation can also be reset.
 - Loaded simulation can be changed from the menu. Accepts a string of length 2-12 comprising of characters ["L", "R"] (case sensitive)
-- Simulation speed can be controlled using slider on the bottom. slider is [logarithmic], ranging from 1-0.001s. (Likely broken since FLTK's built-in timeout method accepts *double*, limiting precision to 2 decimal places)
+- Simulation speed can be controlled using slider on the bottom. slider is [logarithmic], ranging from 1-0.001s. (Likely unprecise due to being bottlenecked by FLTK's draw speeds)
 # License
 This program was constructed using a Python wrapper for the FLTK toolkit.
 Software is issued under an MIT License.
