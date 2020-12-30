@@ -105,7 +105,7 @@ class Langton(Fl_Double_Window):
             fl_alert("Invalid sequence!")
 
         self.b_cb(self)
-
+        
     def step(self, w=None):
         """Advances simulation to its next iteration."""
         #verbose coordinates
@@ -139,7 +139,7 @@ class Langton(Fl_Double_Window):
         
         """Starts the simulation."""
         #prevent multiple steps from happening asynchronously
-        w.deactivate()
+        self.startbut.deactivate()
         #schedule step()
         Fl.add_timeout(1/self.waittime, self.step) 
         #set button_r to PAUSE mode instead of RESET mode
