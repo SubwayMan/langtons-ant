@@ -9,7 +9,9 @@ Langton's Ant is a simple set of rules that are imposed on an "ant" moving throu
   - Simulate at varying speeds
 
 # Program use
-- Run simulation by going to the src directory and running the main script [Langton.py].
+- To get the code onto your machine, you can download git and directly clone this repository. This simulation requires PyFLTK preinstalled.
+- If you have never used Git before, you can instead copy-paste the source code onto your own machine, save it as a new python script, and run it from there. Only the src/LangtonsAnt.py code is necessary.
+- If using git, run simulation by going to the src directory and running the main script [Langton.py].
 - Simulation can be started/paused with buttons. Upon pause, simulation can also be reset.
 - Loaded simulation can be changed from the menu. Accepts a string of length 2-12 comprising of characters ["L", "R"] (case sensitive)
 - Simulation speed can be controlled using slider on the bottom. slider is [logarithmic], ranging from 1-0.001s. (Innacurate, likely due to bottleneck from FLTK draw speeds)
